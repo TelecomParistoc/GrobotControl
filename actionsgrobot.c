@@ -1,4 +1,4 @@
-
+#include <wiringPiI2C>
 
 void initMoteurs() {
   pinMode(1, PWM_OUTPUT); // Motor 1
@@ -12,19 +12,11 @@ void activerLanceurDeBalles() {
 }
 
 void expandGrobot() {
-
-
-
   //deploy the cylinder with the mat
   move_to(143, 0);
   move_to(144, 0);
   //make sure these angles are OK...
 
-
   // expand with AX12
   pwmWrite(1, 512); // Half value, NEED TESTING
-
-
-
-
 }
