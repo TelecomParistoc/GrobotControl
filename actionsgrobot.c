@@ -1,4 +1,7 @@
-#include <wiringPiI2C>
+#include <wiringPi.h>
+#include "actionsgrobot.h"
+#include <robotdriver/driver.h>
+#include "../Pinces/ax12actions.h"
 
 void initMoteurs() {
   pinMode(1, PWM_OUTPUT); // Motor 1
