@@ -1,8 +1,21 @@
 #include <wiringPiI2C>
 
 void initMoteurs() {
+  wiringPiSetup();
   pinMode(1, PWM_OUTPUT); // Motor 1
   pinMode(7, OUTPUT); // Motor 2, lanceur de balles ?
+  AX12setSpeed(143, SPEED);
+  AX12setSpeed(144, SPEED);
+}
+
+void testLanceurDeBalles() {
+  digitalWrite(7, 1);
+  waitFor(500); // NEED TESTING
+  digitalWrite(7, 0);
+}
+
+void testMoteurs() {
+
 }
 
 void activerLanceurDeBalles() {
