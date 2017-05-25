@@ -14,10 +14,6 @@ void testLanceurDeBalles() {
   digitalWrite(7, 0);
 }
 
-void testMoteurs() {
-
-}
-
 void activerLanceurDeBalles() {
   digitalWrite(7, 1);
   waitFor(3000); // NEED TESTING
