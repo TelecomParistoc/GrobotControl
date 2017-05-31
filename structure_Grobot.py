@@ -22,7 +22,7 @@ CATAPULT_SPEED = 60 #must be in range [0, 100]
 catapult_button_pin_bcm = gpio.gpio_index_of_wpi_pin(25)
 shaker_pin_bcm          = gpio.gpio_index_of_wpi_pin(1)
 
-
+color_button_pin_bcm    = gpio.gpio_index_of_wpi_pin(22)
 
 #####################    PIN INITIALISATION       ###############################
 gpio.set_pull_up_down(catapult_button_pin_bcm, gpio.PULL_UP)
@@ -31,8 +31,14 @@ gpio.set_pin_mode(catapult_button_pin_bcm, gpio.INPUT)
 gpio.set_pull_up_down(shaker_pin_bcm, gpio.PULL_UP)
 gpio.set_pin_mode(shaker_pin_bcm, gpio.OUTPUT)
 
+gpio.set_pull_up_down(color_button_pin_bcm, gpio.PULL_UP)
+gpio.set_pin_mode(color_button_pin_bcm, gpio.INPUT)
 
-
+def get_team_color():
+    if gpio.digital_read(color_button_pin_bcm) == 1:
+        return "orange"
+    else:
+        return "green"
 
 ##################     CONSTRUCTION OF THE ROBOT    ############################
 
@@ -44,11 +50,6 @@ robot.add_object(AX12(142), "AX12_ball_release")
 
 
 ###################     ACTION FUNCTIONS    ####################################
-
-def catapult_button():
-    read_value = digital_read(catapult_button_pin_bcm)
-    return read_value != 0
-
 
 def deploy_left_ball_collector():
     robot.AX12_left_ball_collector.move(30)
@@ -125,8 +126,7 @@ def launch_ball(number_of_balls=1):
 def shake(duration=2.):
     #duration is in seconds
 
-    #pwm should be used, but it does not work, so...
-    #gpio.pwm_write(30)
+    #we don't use pwm
     gpio.digital_write(shaker_pin_bcm, 1)
     sleep(duration)
     gpio.digital_write(shaker_pin_bcm, 0)

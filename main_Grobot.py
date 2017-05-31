@@ -5,10 +5,13 @@ from I2C_bus import I2C_bus             #from libAX12/pythonBinding
 from starting_block import add_jack_and_delay, time_elapsed, manage_time_elapsed
 # the robot is "constructed" in structure_Grobot.py
 from structure_Grobot import *
+import paths
 
 from time import sleep
 
 
+STARTING_POINT = [0, 0]
+STARTING_HEADING = [0]
 
 
 ############################ TOP LEVEL ACTION DEFINITION #######################
@@ -19,22 +22,32 @@ robot.add_sequence("main_sequence")
 # IMPORTANT : programs a global stop on the raspi, ie no more actions will be done
 # NOTE : this is not sufficient !!! a stop command must be send to the STM
 # some cleaning must also be done: stop AX12, ...
-robot.add_parallel(time_elapsed, [60, lambda: manage_time_elapsed(robot)], False)
+robot.add_parallel(time_elapsed, [666, lambda: manage_time_elapsed(robot)], False)
+robot.add_parallel(robot.setPosition, STARTING_POINT, False)
+robot.add_parallel(robot.set_heading, STARTING_HEADING, False)
 robot.wait()
 
 
 robot.add_parallel(deploy_left_ball_collector, [], False)
 robot.wait()
 
-robot.add_parallel(motion.move, [-210])
+robot.add_parallel(robot.moveTo, [-210, 0, 0])
 robot.wait()
 
 robot.wait(max_delay=2.0, n_callbacks=1)
-robot.add_parallel(process_balls, ["left", True])
-robot.add_parallel(shake, [10], False)
+
+def log():
+    print "look at me mom"
+#robot.add_parallel(log, [], False)
+robot.add_parallel_thread(process_balls, ["left", True])
+robot.add_parallel_thread(shake, [10], False)
 robot.wait()
 
-robot.add_parallel(motion.turn, [270])
+
+robot.add_parallel(log, [], False)
+robot.add_parallel(robot.move, [-100])
+robot.wait()
+robot.add_parallel(robot.turn, [270])
 robot.wait()
 """robot.add_parallel(robot.AX12_catapult.turn, [-100], False)
 robot.wait(max_delay=10, n_callbacks=1)
@@ -43,6 +56,7 @@ robot.add_parallel(robot.AX12_catapult.turn, [0], False)
 robot.wait()
 """
 robot.add_parallel(launch_ball, [4], False) #TODO rajouter un callback au launch_ball
+robot.add_parallel(log, [], False)
 robot.wait(max_delay=15, n_callbacks=1)
 robot.sequence_done()
 
@@ -71,7 +85,7 @@ gpio.set_pin_mode(jack_pin_bcm, gpio.INPUT) #easier to test with hand (gpio writ
 #with the real jack, it must be gpio.INPUT )
 
 # delay = 10 = maximum time the robot waits before aborting
-manage_jack = add_jack_and_delay(robot, 30)
+manage_jack = add_jack_and_delay(robot, 666)
 
 gpio.assign_callback_on_gpio_down(jack_pin_bcm, lambda: manage_jack(False))
 gpio.assign_callback_on_gpio_up(jack_pin_bcm, lambda: manage_jack(True))
