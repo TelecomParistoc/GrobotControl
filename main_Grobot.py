@@ -40,7 +40,7 @@ robot.wait()
 #robot.wait(max_delay=2.0, n_callbacks=1)
 
 #robot.add_parallel(log, [], False)
-robot.add_parallel_thread(process_balls, ["left", True])
+robot.add_parallel_thread(process_balls, ["right", True])
 robot.add_parallel_thread(shake, [10], False)
 robot.wait()
 

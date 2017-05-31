@@ -6,6 +6,7 @@ from AX12 import AX12
 import gpio
 
 from time import sleep
+from threading import Thread
 
 # we don't need to call gpio.init() because it should alos be done in main_Grobot.py
 #but we can do it anyway, so we can do unit test on this file
@@ -24,6 +25,10 @@ shaker_pin_bcm          = gpio.gpio_index_of_wpi_pin(1)
 
 color_button_pin_bcm    = gpio.gpio_index_of_wpi_pin(22)
 
+front_sensors_pin_list_bcm = list(map(gpio.gpio_index_of_wpi_pin, [3, 4]))
+rear_sensors_pin_list_bcm = list(map(gpio.gpio_index_of_wpi_pin, [2, 0]))
+
+
 #####################    PIN INITIALISATION       ###############################
 gpio.set_pull_up_down(catapult_button_pin_bcm, gpio.PULL_UP)
 gpio.set_pin_mode(catapult_button_pin_bcm, gpio.INPUT)
@@ -33,6 +38,10 @@ gpio.set_pin_mode(shaker_pin_bcm, gpio.OUTPUT)
 
 gpio.set_pull_up_down(color_button_pin_bcm, gpio.PULL_UP)
 gpio.set_pin_mode(color_button_pin_bcm, gpio.INPUT)
+
+for pin in front_sensors_pin_list_bcm + rear_sensors_pin_list_bcm:
+    gpio.set_pull_up_down(pin, gpio.PULL_DOWN)
+    gpio.set_pin_mode(pin, gpio.INPUT)
 
 def get_team_color():
     if gpio.digital_read(color_button_pin_bcm) == 1:
@@ -51,6 +60,18 @@ robot.add_object(AX12(142), "AX12_ball_release")
 
 ###################     ACTION FUNCTIONS    ####################################
 
+def is_obstacle_forwards():
+    for sensor in front_sensors_pin_list_bcm:
+        if gpio.digital_read(sensor) == 1:
+            return True
+    return False
+
+def is_obstacle_backwards():
+    for sensor in rear_sensors_pin_list_bcm:
+        if gpio.digital_read(sensor) == 1:
+            return True
+    return False
+
 def deploy_left_ball_collector():
     robot.AX12_left_ball_collector.move(30)
 
@@ -61,7 +82,7 @@ def move_sorter_to_input_position(side):
     if side == "left":
         robot.AX12_sorter.move(73)
     elif side == "right":
-        robot.AX12_sorter.move(666) #TODO find a good value!!
+        robot.AX12_sorter.move(-73) #TODO find a good value!!
     else:
         print "[ERROR]"
 
