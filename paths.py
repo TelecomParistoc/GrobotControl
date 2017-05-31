@@ -11,7 +11,7 @@ def json_to_python(filename, color):
     with open(PATHS_FOLDER + filename, "r") as f:
         result = json.loads(f.read())
 
-    return [(p['x'], p['y']) for result[color][0]['points']]
+    return [(p['x'], p['y']) for p in result[color][0]['points']]
 
 
 def load_all_path(color):

@@ -34,22 +34,23 @@ robot.wait()
 robot.add_parallel(deploy_left_ball_collector, [], False)
 robot.wait()
 
-robot.add_parallel(robot.moveTo, [-210, 0, 0])
-robot.wait()
+#robot.add_parallel(robot.moveTo, [-210, 0, 0])
+#robot.wait()
 
-robot.wait(max_delay=2.0, n_callbacks=1)
+#robot.wait(max_delay=2.0, n_callbacks=1)
 
 #robot.add_parallel(log, [], False)
 robot.add_parallel_thread(process_balls, ["left", True])
 robot.add_parallel_thread(shake, [10], False)
 robot.wait()
 
-
+"""
 robot.add_parallel(log, [], False)
 robot.add_parallel(robot.move, [-100])
 robot.wait()
 robot.add_parallel(robot.turn, [270])
 robot.wait()
+"""
 
 robot.add_parallel(launch_ball, [4], False) #TODO rajouter un callback au launch_ball
 robot.wait(max_delay=15, n_callbacks=1)

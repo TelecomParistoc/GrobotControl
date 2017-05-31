@@ -80,12 +80,13 @@ def process_balls(side, all_clean, callback):
     """
 
     #un while on a une balle serait mieux
+    robot.AX12_sorter.set_speed(10)
     for i in range(7):
         move_sorter_to_input_position(side)
 
         #wait for a ball
         #must be improved
-        sleep(1.)
+        sleep(3.)
         if all_clean:
             move_sorter_to_clean_position()
 
