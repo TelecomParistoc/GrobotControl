@@ -1,8 +1,9 @@
 import RPi.GPIO as GPIO
+pin = 26
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(8, GPIO.IN)
+GPIO.setup(pin, GPIO.IN)
 
-print GPIO.input(8)
+print GPIO.input(pin)
 
 GPIO.cleanup()

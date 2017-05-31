@@ -31,14 +31,19 @@ robot.wait()
 
 robot.wait(max_delay=2.0, n_callbacks=1)
 robot.add_parallel(process_balls, ["left", True])
+robot.add_parallel(shake, [10], False)
 robot.wait()
 
-robot.add_parallel(robot.AX12_catapult.turn, [-100], False)
+robot.add_parallel(motion.turn, [270])
+robot.wait()
+"""robot.add_parallel(robot.AX12_catapult.turn, [-100], False)
 robot.wait(max_delay=10, n_callbacks=1)
 
 robot.add_parallel(robot.AX12_catapult.turn, [0], False)
 robot.wait()
-
+"""
+robot.add_parallel(launch_ball, [4], False) #TODO rajouter un callback au launch_ball
+robot.wait(max_delay=15, n_callbacks=1)
 robot.sequence_done()
 
 
@@ -46,6 +51,9 @@ robot.sequence_done()
 
 
 ######################## INITIALISATION AND JACK MANAGEMENT ####################
+
+jack_pin_wpi = 10
+
 try:
     I2C_bus.init(115200)
 except Exception as e:
@@ -56,17 +64,17 @@ gpio.init()
 
 #converts the wPi pin number to the BCM pin number
 #see the output of "gpio readall" on a raspi
-jack_pin = gpio.gpio_index_of_wpi_pin(10)
-print "Jack pin corresponds to BCM index "+str(jack_pin)
-gpio.set_pin_mode(jack_pin, gpio.INPUT) #easier to test with hand (gpio write 5 0 ou 1)
+jack_pin_bcm = gpio.gpio_index_of_wpi_pin(jack_pin_wpi)
+print "Jack pin corresponds to BCM index "+str(jack_pin_bcm)
+gpio.set_pin_mode(jack_pin_bcm, gpio.INPUT) #easier to test with hand (gpio write 5 0 ou 1)
 # ie we don't test with the real jack, we just simulate it
 #with the real jack, it must be gpio.INPUT )
 
 # delay = 10 = maximum time the robot waits before aborting
 manage_jack = add_jack_and_delay(robot, 30)
 
-gpio.assign_callback_on_gpio_down(24, lambda: manage_jack(False))
-gpio.assign_callback_on_gpio_up(24, lambda: manage_jack(True))
+gpio.assign_callback_on_gpio_down(jack_pin_bcm, lambda: manage_jack(False))
+gpio.assign_callback_on_gpio_up(jack_pin_bcm, lambda: manage_jack(True))
 
 robot.wait_sequence() # We wait for jack beeing pushed/pulled
 

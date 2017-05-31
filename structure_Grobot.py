@@ -7,13 +7,26 @@ import gpio
 
 from time import sleep
 
+# we don't need to call gpio.init() because it should alos be done in main_Grobot.py
+#but we can do it anyway, so we can do unit test on this file
+gpio.init()
+
 ############################# PARAMETERS #######################################
 
-catapult_button_pin = 0
-shaker_pin          = 1
 
+CATAPULT_MEASUREMENT_PERIOD = 0.01 #seconds
+CATAPULT_SPEED = 60 #must be in range [0, 100]
 
-########################## CONSTRUCTION OF THE ROBOT ###########################
+# IMPORTANT: functions in gpio bcm numbers (except gpio_index_of_wpi_pin!)
+
+catapult_button_pin_bcm = gpio.gpio_index_of_wpi_pin(25)
+shaker_pin_bcm          = gpio.gpio_index_of_wpi_pin(1)
+
+#####################    PIN INITIALISATION       ###############################
+gpio.set_pin_mode(catapult_button_pin_bcm, gpio.INPUT)
+gpio.set_pin_mode(shaker_pin_bcm, gpio.OUTPUT)
+
+##################     CONSTRUCTION OF THE ROBOT    ############################
 
 robot = Robot()
 robot.add_object(AX12(143), "AX12_left_ball_collector")
@@ -21,17 +34,11 @@ robot.add_object(AX12(162), "AX12_catapult")
 robot.add_object(AX12(144), "AX12_sorter")
 robot.add_object(AX12(142), "AX12_ball_release")
 
-gpio.set_pin_mode(shaker_pin, gpio.OUTPUT)
 
-
-######################### ACTION FUNCTIONS #####################################
-
-def init_catapult_button():
-    catapult_button_pin = gpio.gpio_index_of_wpi_pin(26) #TODO check pin value (the selected value correponds to the physical pin 30)
-    gpio.set_pin_mode(catapult_button_pin, gpio.INPUT)
+###################     ACTION FUNCTIONS    ####################################
 
 def catapult_button():
-    read_value = digital_read(catapult_button_pin)
+    read_value = digital_read(catapult_button_pin_bcm)
     return read_value != 0
 
 
@@ -75,6 +82,7 @@ def process_balls(side, all_clean, callback):
 
         else:
             #check color and make a decision
+            #to check color, read gpio pins 18 and 22 (physical numbers)
             pass
 
         sleep(1.)
@@ -82,27 +90,35 @@ def process_balls(side, all_clean, callback):
     callback()
 
 
-def eject_ball():
+def wait_for_catapult_down():
+    while gpio.digital_read(catapult_button_pin_bcm) == 1:
+        sleep(CATAPULT_MEASUREMENT_PERIOD)
+
+def wait_for_catapult_up():
+    while gpio.digital_read(catapult_button_pin_bcm) == 0:
+        sleep(CATAPULT_MEASUREMENT_PERIOD)
+
+
+def launch_ball(number_of_balls=1):
 
     #Start the rotation of the AX12
-    robot.AX12_catapult.turn(0) #TODO vitesse à préciser
+    robot.AX12_catapult.turn(-CATAPULT_SPEED)
 
-    #Turn the AX12 until the button is pushed and released
-    #TODO use callbacks
-    while(not catapult_button()):
-        #add delay between checks?
-        pass
+    #we wait for the catapult to be in the down position
+    wait_for_catapult_down()
 
-    while(catapult_button()):
-        #add delay between checks?
-        pass
+    for i in range(number_of_balls):
 
-    #Stop the rotation of the AX12
+        wait_for_catapult_up()
+        wait_for_catapult_down()
+
     robot.AX12_catapult.turn(0)
 
 def shake(duration=2.):
     #duration is in seconds
 
-    gpio.pwm_write(30)
+    #pwm should be used, but it does not work, so...
+    #gpio.pwm_write(30)
+    gpio.digital_write(shaker_pin_bcm, 1)
     sleep(duration)
-    gpio.pwm_write(0)
+    gpio.digital_write(shaker_pin_bcm, 0)

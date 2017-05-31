@@ -1,7 +1,7 @@
 # (re)install all the library the robot needs
 # make sure everything is in this file!
 
-repo_list="libmotors libAX12 robot-framework"
+repo_list="libmotors libAX12 robot-framework GrobotControl"
 force_master=false
 pull_enable=true
 
