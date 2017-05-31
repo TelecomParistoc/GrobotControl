@@ -10,7 +10,7 @@ from time import sleep
 ############################# PARAMETERS #######################################
 
 catapult_button_pin = 0
-
+shaker_pin          = 1
 
 
 ########################## CONSTRUCTION OF THE ROBOT ###########################
@@ -20,6 +20,8 @@ robot.add_object(AX12(143), "AX12_left_ball_collector")
 robot.add_object(AX12(162), "AX12_catapult")
 robot.add_object(AX12(144), "AX12_sorter")
 robot.add_object(AX12(142), "AX12_ball_release")
+
+gpio.set_pin_mode(shaker_pin, gpio.OUTPUT)
 
 
 ######################### ACTION FUNCTIONS #####################################
@@ -97,3 +99,10 @@ def eject_ball():
 
     #Stop the rotation of the AX12
     robot.AX12_catapult.turn(0)
+
+def shake(duration=2.):
+    #duration is in seconds
+
+    gpio.pwm_write(30)
+    sleep(duration)
+    gpio.pwm_write(0)

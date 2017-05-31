@@ -56,9 +56,9 @@ gpio.init()
 
 #converts the wPi pin number to the BCM pin number
 #see the output of "gpio readall" on a raspi
-jack_pin = gpio.gpio_index_of_wpi_pin(5)
+jack_pin = gpio.gpio_index_of_wpi_pin(10)
 print "Jack pin corresponds to BCM index "+str(jack_pin)
-gpio.set_pin_mode(jack_pin, gpio.OUTPUT) #easier to test with hand (gpio write 5 0 ou 1)
+gpio.set_pin_mode(jack_pin, gpio.INPUT) #easier to test with hand (gpio write 5 0 ou 1)
 # ie we don't test with the real jack, we just simulate it
 #with the real jack, it must be gpio.INPUT )
 
