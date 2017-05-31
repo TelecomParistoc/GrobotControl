@@ -17,12 +17,15 @@ STARTING_HEADING = [0]
 ############################ TOP LEVEL ACTION DEFINITION #######################
 # remainder: definition != execution
 
+def log():
+    print "look at me mom"
+
 robot.add_sequence("main_sequence")
 
 # IMPORTANT : programs a global stop on the raspi, ie no more actions will be done
 # NOTE : this is not sufficient !!! a stop command must be send to the STM
 # some cleaning must also be done: stop AX12, ...
-robot.add_parallel(time_elapsed, [666, lambda: manage_time_elapsed(robot)], False)
+robot.add_parallel(time_elapsed, [100, lambda: manage_time_elapsed(robot)], False)
 robot.add_parallel(robot.setPosition, STARTING_POINT, False)
 robot.add_parallel(robot.set_heading, STARTING_HEADING, False)
 robot.wait()
@@ -36,8 +39,6 @@ robot.wait()
 
 robot.wait(max_delay=2.0, n_callbacks=1)
 
-def log():
-    print "look at me mom"
 #robot.add_parallel(log, [], False)
 robot.add_parallel_thread(process_balls, ["left", True])
 robot.add_parallel_thread(shake, [10], False)
@@ -49,14 +50,8 @@ robot.add_parallel(robot.move, [-100])
 robot.wait()
 robot.add_parallel(robot.turn, [270])
 robot.wait()
-"""robot.add_parallel(robot.AX12_catapult.turn, [-100], False)
-robot.wait(max_delay=10, n_callbacks=1)
 
-robot.add_parallel(robot.AX12_catapult.turn, [0], False)
-robot.wait()
-"""
 robot.add_parallel(launch_ball, [4], False) #TODO rajouter un callback au launch_ball
-robot.add_parallel(log, [], False)
 robot.wait(max_delay=15, n_callbacks=1)
 robot.sequence_done()
 
