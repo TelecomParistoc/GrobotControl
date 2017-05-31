@@ -8,6 +8,9 @@ from structure_Grobot import *
 
 from time import sleep
 
+
+
+
 ############################ TOP LEVEL ACTION DEFINITION #######################
 # remainder: definition != execution
 
@@ -16,10 +19,24 @@ robot.add_sequence("main_sequence")
 # IMPORTANT : programs a global stop on the raspi, ie no more actions will be done
 # NOTE : this is not sufficient !!! a stop command must be send to the STM
 # some cleaning must also be done: stop AX12, ...
-robot.add_parallel(time_elapsed, [10, lambda: manage_time_elapsed(robot)], False)
+robot.add_parallel(time_elapsed, [60, lambda: manage_time_elapsed(robot)], False)
 robot.wait()
 
-robot.add_parallel(lambda a: sleep(20), []) #bidon juste pour etre bloquant
+
+robot.add_parallel(deploy_left_ball_collector, [], False)
+robot.wait()
+
+robot.add_parallel(motion.move, [-210])
+robot.wait()
+
+robot.wait(max_delay=2.0, n_callbacks=1)
+robot.add_parallel(process_balls, ["left", True])
+robot.wait()
+
+robot.add_parallel(robot.AX12_catapult.turn, [-100], False)
+robot.wait(max_delay=10, n_callbacks=1)
+
+robot.add_parallel(robot.AX12_catapult.turn, [0], False)
 robot.wait()
 
 robot.sequence_done()

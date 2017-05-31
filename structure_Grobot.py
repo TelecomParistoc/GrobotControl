@@ -5,6 +5,7 @@ import motordriver
 from AX12 import AX12
 import gpio
 
+from time import sleep
 
 ############################# PARAMETERS #######################################
 
@@ -32,12 +33,52 @@ def catapult_button():
     return read_value != 0
 
 
-# TODO : la couleur importe ici ! a prendre en compte
-def deploy_ball_collector():
-    robot.AX12_ball_collector.move_to((0, 0)) #TODO valeurs à préciser
+def deploy_left_ball_collector():
+    robot.AX12_left_ball_collector.move(30)
 
-def close_ball_collector():
-    robot.AX12_ball_collector.move_to((0, 0)) #TODO valeurs à préciser
+def close_left_ball_collector():
+    robot.AX12_ball_collector.move(-41)
+
+def move_sorter_to_input_position(side):
+    if side == "left":
+        robot.AX12_sorter.move(73)
+    elif side == "right":
+        robot.AX12_sorter.move(666) #TODO find a good value!!
+    else:
+        print "[ERROR]"
+
+def move_sorter_to_clean_position():
+    robot.AX12_sorter.move(0) #this is really the real value =D
+
+def move_sorter_to_drop(side):
+    if side == "left":
+        robot.AX12_sorter.move(126)
+
+def process_balls(side, all_clean, callback):
+    """
+        side: must be "left" or "right"
+        all_clean: boolean, true if all balls are clean and thus must be launched
+        callback: function to call when the process is done
+    """
+
+    #un while on a une balle serait mieux
+    for i in range(7):
+        move_sorter_to_input_position(side)
+
+        #wait for a ball
+        #must be improved
+        sleep(1.)
+        if all_clean:
+            move_sorter_to_clean_position()
+
+        else:
+            #check color and make a decision
+            pass
+
+        sleep(1.)
+
+    callback()
+
 
 def eject_ball():
 
