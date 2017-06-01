@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import motion                           #from libmotors
-from I2C_bus import I2C_bus             #from libAX12/pythonBinding
 from starting_block import add_jack_and_delay, time_elapsed, manage_time_elapsed
 # the robot is "constructed" in structure_Grobot.py
 from structure_Grobot import *
@@ -28,6 +27,8 @@ robot.add_sequence("main_sequence")
 robot.add_parallel(time_elapsed, [100, lambda: manage_time_elapsed(robot)], False)
 robot.add_parallel(robot.setPosition, STARTING_POINT, False)
 robot.add_parallel(robot.set_heading, STARTING_HEADING, False)
+robot.add_parallel(robot.start_collision_detection,
+                    [is_obstacle_forwards, is_obstacle_backwards], False)
 robot.wait()
 
 
@@ -58,27 +59,8 @@ robot.sequence_done()
 
 
 
+########################  JACK MANAGEMENT ####################
 
-
-######################## INITIALISATION AND JACK MANAGEMENT ####################
-
-jack_pin_wpi = 10
-
-try:
-    I2C_bus.init(115200)
-except Exception as e:
-    print "[-] Unable to start I2C communication ("+str(e)+"), exiting"
-    exit()
-
-gpio.init()
-
-#converts the wPi pin number to the BCM pin number
-#see the output of "gpio readall" on a raspi
-jack_pin_bcm = gpio.gpio_index_of_wpi_pin(jack_pin_wpi)
-print "Jack pin corresponds to BCM index "+str(jack_pin_bcm)
-gpio.set_pin_mode(jack_pin_bcm, gpio.INPUT) #easier to test with hand (gpio write 5 0 ou 1)
-# ie we don't test with the real jack, we just simulate it
-#with the real jack, it must be gpio.INPUT )
 
 # delay = 10 = maximum time the robot waits before aborting
 manage_jack = add_jack_and_delay(robot, 666)

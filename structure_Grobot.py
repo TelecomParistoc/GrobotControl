@@ -1,25 +1,31 @@
 # -*- coding: utf-8 -*-
 from robot import Robot		#robot is an installed package
 import motordriver
-
+from I2C_bus import I2C_bus             #from libAX12/pythonBinding
 from AX12 import AX12
 import gpio
 
 from time import sleep
 from threading import Thread
 
-# we don't need to call gpio.init() because it should alos be done in main_Grobot.py
-#but we can do it anyway, so we can do unit test on this file
+
+try:
+    I2C_bus.init(115200)
+except Exception as e:
+    print "[-] Unable to start I2C communication ("+str(e)+"), exiting"
+    exit()
+
 gpio.init()
 
 ############################# PARAMETERS #######################################
-
 
 CATAPULT_MEASUREMENT_PERIOD = 0.01 #seconds
 CATAPULT_SPEED = 60 #must be in range [0, 100]
 
 # IMPORTANT: functions in gpio bcm numbers (except gpio_index_of_wpi_pin!)
 
+#converts the wPi pin number to the BCM pin number
+#see the output of "gpio readall" on a raspi
 catapult_button_pin_bcm = gpio.gpio_index_of_wpi_pin(25)
 shaker_pin_bcm          = gpio.gpio_index_of_wpi_pin(1)
 
@@ -28,6 +34,11 @@ color_button_pin_bcm    = gpio.gpio_index_of_wpi_pin(22)
 front_sensors_pin_list_bcm = list(map(gpio.gpio_index_of_wpi_pin, [3, 4]))
 rear_sensors_pin_list_bcm = list(map(gpio.gpio_index_of_wpi_pin, [2, 0]))
 
+jack_pin_bcm = gpio.gpio_index_of_wpi_pin(10)
+gpio.set_pin_mode(jack_pin_bcm, gpio.INPUT)
+#gpio.OUTPUT -> easier to test with hand (gpio write 5 0 ou 1)
+# ie we don't test with the real jack, we just simulate it
+#with the real jack, it must be gpio.INPUT )
 
 #####################    PIN INITIALISATION       ###############################
 gpio.set_pull_up_down(catapult_button_pin_bcm, gpio.PULL_UP)
