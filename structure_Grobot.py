@@ -178,3 +178,25 @@ def grobot_time_elapsed():
         robot.getattr(name).turn(0)
     robot.emergency_stop()
     manage_time_elapsed(robot)
+
+def init_bee_arm(robot):
+    #make sure the robot has enough space to move its arm
+    if robot.color == "green":
+        robot.AX12_bee_arm.move(90)
+    elif robot.color == "orange":
+        robot.AX12_bee_arm.move(-90)
+    else:
+        print "ERROR in init_bee_arm - unknown color"
+
+def push_bee(robot):
+    if robot.color == "green":
+        robot.AX12_bee_arm.move(-90)
+    elif robot.color == "orange":
+        robot.AX12_bee_arm.move(90)
+    else:
+        print "ERROR in push_bee - unknown color"
+        return
+    sleep(1.)
+
+robot.add_method(init_bee_arm)
+robot.add_method(push_bee)

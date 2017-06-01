@@ -19,8 +19,8 @@ def init_color(robot):
         STARTING_POINT = [50, 155]
         STARTING_HEADING = 0
     else:
-        STARTING_POINT = [2950, 155]
-        STARTING_HEADING = 180
+        STARTING_POINT = [2944, 350]
+        STARTING_HEADING = 0
 
 
 ########################  JACK MANAGEMENT ####################
@@ -44,6 +44,10 @@ def log():
 
 
 init_color(robot)
+robot.setPosition(*STARTING_POINT)
+robot.set_heading(STARTING_HEADING)
+robot.init_bee_arm() #make sure there is enough space at that time!!
+#robot.start_collision_detection(is_obstacle_forwards, is_obstacle_backwards)
 
 robot.add_sequence("main_sequence")
 
@@ -54,15 +58,22 @@ robot.add_sequence("main_sequence")
 robot.add_parallel(log, [], False)
 robot.add_parallel(time_elapsed, [100, grobot_time_elapsed], False)
 
-#warning: arguments must been known when we add_parallel a function!
-#so we don't write: robot.add_parallel(robot.setPosition, STARTING_POINT, False)
-#but
-robot.add_parallel(lambda: robot.setPosition(*STARTING_POINT), [], False)
-robot.add_parallel(lambda: robot.set_heading(STARTING_HEADING), [], False)
-#robot.add_parallel(robot.start_collision_detection, [is_obstacle_forwards, is_obstacle_backwards], False)
+robot.load_add_path("paths/chemin 8.json")
+robot.add_parallel(robot.turn, [45 if robot.color == "green" else 315])
 robot.wait()
 
-robot.load_add_path("paths/starting_point_to_bee.json")
+robot.load_add_path("paths/chemin 9.json")
+robot.add_parallel(robot.turn, [90])
+
+robot.wait(max_delay=5)
+robot.add_parallel(robot.set_direction_to_wall, [motion.DIR_FORWARD], False)
+robot.add_parallel(robot.set_orientation_after_wall, [90], False)
+robot.add_parallel(robot.move_to_wall, [], False)
+#degueu: il faudrait mettre un callbacl a move_to_wall
+robot.wait(max_delay=3, n_callbacks=1)
+
+robot.add_parallel(robot.push_bee, [], False)
+robot.wait(max_delay=1, n_callbacks=1)
 
 
 #robot.add_parallel(deploy_left_ball_collector, [], False)
@@ -86,8 +97,8 @@ robot.add_parallel(robot.turn, [270])
 robot.wait()
 """
 
-robot.add_parallel(launch_ball, [4], False) #TODO rajouter un callback au launch_ball
-robot.wait(max_delay=15, n_callbacks=1)
+#robot.add_parallel(launch_ball, [4], False) #TODO rajouter un callback au launch_ball
+#robot.wait(max_delay=15, n_callbacks=1)
 robot.sequence_done()
 
 
