@@ -9,8 +9,8 @@ import paths
 from time import sleep
 
 
-STARTING_POINT = [0, 0]
-STARTING_HEADING = [0]
+STARTING_POINT = None #set in init_color()
+STARTING_HEADING = None
 
 
 ############################ TOP LEVEL ACTION DEFINITION #######################
@@ -24,7 +24,10 @@ robot.add_sequence("main_sequence")
 # IMPORTANT : programs a global stop on the raspi, ie no more actions will be done
 # NOTE : this is not sufficient !!! a stop command must be send to the STM
 # some cleaning must also be done: stop AX12, ...
-robot.add_parallel(time_elapsed, [100, lambda: manage_time_elapsed(robot)], False)
+
+robot.add_parallel(init_color, [], False)
+
+robot.add_parallel(time_elapsed, [100, grobot_time_elapsed], False)
 robot.add_parallel(robot.setPosition, STARTING_POINT, False)
 robot.add_parallel(robot.set_heading, STARTING_HEADING, False)
 robot.add_parallel(robot.start_collision_detection,
@@ -70,7 +73,14 @@ gpio.assign_callback_on_gpio_up(jack_pin_bcm, lambda: manage_jack(True))
 
 robot.wait_sequence() # We wait for jack beeing pushed/pulled
 
-
+def init_color():
+    robot.color = get_team_color()
+    if(robot.color == "orange"):
+        STARTING_POINT = [50, 155]
+        STARTING_HEADING = [270]
+    else:
+        STARTING_POINT = [2950, 155]
+        STARTING_HEADING = [90]
 
 
 ########################### MAIN SEQUENCE EXECUTION ############################
