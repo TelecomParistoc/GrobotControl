@@ -61,6 +61,7 @@ def get_team_color():
     else:
         return "green"
 
+
 ##################     CONSTRUCTION OF THE ROBOT    ############################
 
 #contains the (name, id) of the used AX12

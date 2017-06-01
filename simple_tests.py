@@ -12,7 +12,7 @@ robot.set_heading(0)
 #robot.start_collision_detection(is_obstacle_forwards, is_obstacle_backwards)
 
 #motion.turn(180)
-#robot.moveTo(100, 0, -1)
+robot.moveTo(-100, -100, 180)
 while 1:
     sleep(.5)
     print "x = ", motordriver.get_pos_X()
