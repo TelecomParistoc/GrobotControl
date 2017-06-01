@@ -75,6 +75,15 @@ robot.wait(max_delay=3, n_callbacks=1)
 robot.add_parallel(robot.push_bee, [], False)
 robot.wait(max_delay=1, n_callbacks=1)
 
+robot.load_add_path("paths/chemin 10.json")
+robot.add_parallel(robot.turn, [90])
+robot.wait()
+robot.add_parallel(robot.set_direction_to_wall, [motion.DIR_BACKWARD], False)
+robot.add_parallel(robot.set_orientation_after_wall, [90], False)
+robot.add_parallel(robot.move_to_wall, [], False)
+#degueu: il faudrait mettre un callback a move_to_wall
+robot.wait(max_delay=3, n_callbacks=1)
+
 
 #robot.add_parallel(deploy_left_ball_collector, [], False)
 #robot.wait()
