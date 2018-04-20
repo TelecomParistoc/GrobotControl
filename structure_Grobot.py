@@ -22,9 +22,17 @@ CATAPULT_SPEED = 60 #must be in range [0, 100]
 catapult_button_pin_bcm = gpio.gpio_index_of_wpi_pin(25)
 shaker_pin_bcm          = gpio.gpio_index_of_wpi_pin(1)
 
+
+
 #####################    PIN INITIALISATION       ###############################
+gpio.set_pull_up_down(catapult_button_pin_bcm, gpio.PULL_UP)
 gpio.set_pin_mode(catapult_button_pin_bcm, gpio.INPUT)
+
+gpio.set_pull_up_down(shaker_pin_bcm, gpio.PULL_UP)
 gpio.set_pin_mode(shaker_pin_bcm, gpio.OUTPUT)
+
+
+
 
 ##################     CONSTRUCTION OF THE ROBOT    ############################
 
