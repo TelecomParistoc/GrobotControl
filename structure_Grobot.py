@@ -143,5 +143,5 @@ def grobot_time_elapsed():
     '''
     for name, _ in AX12_list:
         robot.getattr(name).turn(0)
-
+    robot.emergency_stop()
     manage_time_elapsed(robot)
