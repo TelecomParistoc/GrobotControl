@@ -7,6 +7,14 @@ import gpio
 
 from time import sleep
 
+from starting_block import manage_time_elapsed
+
+#contains the (name, id) of the used AX12
+AX12_list = [("AX12_left_ball_collector", 143),
+            ("AX12_catapult", 162),
+            ("AX12_sorter", 144),
+            ("AX12_ball_release", 142)]
+
 # we don't need to call gpio.init() because it should alos be done in main_Grobot.py
 #but we can do it anyway, so we can do unit test on this file
 gpio.init()
@@ -43,10 +51,8 @@ def get_team_color():
 ##################     CONSTRUCTION OF THE ROBOT    ############################
 
 robot = Robot()
-robot.add_object(AX12(143), "AX12_left_ball_collector")
-robot.add_object(AX12(162), "AX12_catapult")
-robot.add_object(AX12(144), "AX12_sorter")
-robot.add_object(AX12(142), "AX12_ball_release")
+for name, id in AX12_list:
+    robot.add_object(AX12(id), name)
 
 
 ###################     ACTION FUNCTIONS    ####################################
@@ -130,3 +136,12 @@ def shake(duration=2.):
     gpio.digital_write(shaker_pin_bcm, 1)
     sleep(duration)
     gpio.digital_write(shaker_pin_bcm, 0)
+
+def grobot_time_elapsed():
+    '''
+    called when the time is over to stop Grobot from moving
+    '''
+    for name, _ in AX12_list:
+        robot.getattr(name).turn(0)
+
+    manage_time_elapsed(robot)
