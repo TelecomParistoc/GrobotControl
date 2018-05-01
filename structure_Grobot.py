@@ -9,12 +9,6 @@ from time import sleep
 
 from starting_block import manage_time_elapsed
 
-#contains the (name, id) of the used AX12
-AX12_list = [("AX12_left_ball_collector", 143),
-            ("AX12_catapult", 162),
-            ("AX12_sorter", 144),
-            ("AX12_ball_release", 142)]
-
 # we don't need to call gpio.init() because it should alos be done in main_Grobot.py
 #but we can do it anyway, so we can do unit test on this file
 gpio.init()
@@ -49,6 +43,12 @@ def get_team_color():
         return "green"
 
 ##################     CONSTRUCTION OF THE ROBOT    ############################
+
+#contains the (name, id) of the used AX12
+AX12_list = [("AX12_left_ball_collector", 143),
+            ("AX12_catapult", 162),
+            ("AX12_sorter", 144),
+            ("AX12_ball_release", 142)]
 
 robot = Robot()
 for name, id in AX12_list:
