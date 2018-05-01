@@ -25,7 +25,10 @@ robot.add_sequence("main_sequence")
 # IMPORTANT : programs a global stop on the raspi, ie no more actions will be done
 # NOTE : this is not sufficient !!! a stop command must be send to the STM
 # some cleaning must also be done: stop AX12, ...
-robot.add_parallel(time_elapsed, [100, lambda: grobot_time_elapsed()], False)
+
+robot.add_parallel(lambda: robot.color = get_team_color(), [], False)
+
+robot.add_parallel(time_elapsed, [100, grobot_time_elapsed], False)
 robot.add_parallel(robot.setPosition, STARTING_POINT, False)
 robot.add_parallel(robot.set_heading, STARTING_HEADING, False)
 robot.wait()
