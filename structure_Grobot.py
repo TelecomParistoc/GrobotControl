@@ -54,7 +54,6 @@ robot = Robot()
 for name, id in AX12_list:
     robot.add_object(AX12(id), name)
 
-
 ###################     ACTION FUNCTIONS    ####################################
 
 def deploy_left_ball_collector():
