@@ -10,8 +10,8 @@ import paths
 from time import sleep
 
 
-STARTING_POINT = None
-STARTING_HEADING = [0]
+STARTING_POINT = None #set in set_color()
+STARTING_HEADING = None
 
 
 ############################ TOP LEVEL ACTION DEFINITION #######################
@@ -93,9 +93,11 @@ robot.wait_sequence() # We wait for jack beeing pushed/pulled
 def set_color():
     robot.color = get_team_color()
     if(robot.color == "orange"):
-        STARTING_POINT = [50, 155] #position de départ : orange
+        STARTING_POINT = [50, 155]
+        STARTING_HEADING = [270]
     else:
-        STARTING_POINT = [2950, 155] #position de départ : vert
+        STARTING_POINT = [2950, 155]
+        STARTING_HEADING = [90]
 
 
 
