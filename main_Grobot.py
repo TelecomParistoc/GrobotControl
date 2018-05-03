@@ -10,7 +10,7 @@ import paths
 from time import sleep
 
 
-STARTING_POINT = None #set in set_color()
+STARTING_POINT = None #set in init_color()
 STARTING_HEADING = None
 
 
@@ -26,7 +26,7 @@ robot.add_sequence("main_sequence")
 # NOTE : this is not sufficient !!! a stop command must be send to the STM
 # some cleaning must also be done: stop AX12, ...
 
-robot.add_parallel(set_color, [], False)
+robot.add_parallel(init_color, [], False)
 
 robot.add_parallel(time_elapsed, [100, grobot_time_elapsed], False)
 robot.add_parallel(robot.setPosition, STARTING_POINT, False)
@@ -90,7 +90,7 @@ gpio.assign_callback_on_gpio_up(jack_pin_bcm, lambda: manage_jack(True))
 
 robot.wait_sequence() # We wait for jack beeing pushed/pulled
 
-def set_color():
+def init_color():
     robot.color = get_team_color()
     if(robot.color == "orange"):
         STARTING_POINT = [50, 155]
@@ -98,8 +98,6 @@ def set_color():
     else:
         STARTING_POINT = [2950, 155]
         STARTING_HEADING = [90]
-
-
 
 
 ########################### MAIN SEQUENCE EXECUTION ############################
