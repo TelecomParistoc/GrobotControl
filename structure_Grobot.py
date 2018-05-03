@@ -67,7 +67,8 @@ def get_team_color():
 AX12_list = [("AX12_left_ball_collector", 143),
             ("AX12_catapult", 162),
             ("AX12_sorter", 144),
-            ("AX12_ball_release", 142)]
+            ("AX12_ball_release", 142),
+            ("AX12_bee_arm", 161)]
 
 robot = Robot()
 for name, id in AX12_list:
