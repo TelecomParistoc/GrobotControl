@@ -11,6 +11,8 @@ from time import sleep
 STARTING_POINT = None #set in init_color()
 STARTING_HEADING = None
 
+PATHS_FOLDER = "/home/pi/GrobotControl/paths/"
+
 def init_color(robot):
     global STARTING_POINT, STARTING_HEADING
     robot.color = get_team_color()
@@ -58,11 +60,11 @@ robot.add_sequence("main_sequence")
 
 robot.add_parallel(time_elapsed, [100, grobot_time_elapsed], False)
 
-robot.load_add_path("paths/chemin 8.json")
+robot.load_add_path(PATHS_FOLDER + "chemin 8.json")
 robot.add_parallel(robot.turn, [45 if robot.color == "green" else 315])
 robot.wait()
 
-robot.load_add_path("paths/chemin 9.json")
+robot.load_add_path(PATHS_FOLDER + "chemin 9.json")
 robot.add_parallel(robot.turn, [90])
 
 robot.wait(max_delay=5)
@@ -75,7 +77,7 @@ robot.wait(max_delay=3, n_callbacks=1)
 robot.add_parallel(robot.push_bee, [], False)
 robot.wait(max_delay=1, n_callbacks=1)
 
-robot.load_add_path("paths/chemin 10.json")
+robot.load_add_path(PATHS_FOLDER + "chemin 10.json")
 robot.add_parallel(robot.turn, [90])
 robot.wait()
 robot.add_parallel(robot.set_direction_to_wall, [motion.DIR_BACKWARD], False)

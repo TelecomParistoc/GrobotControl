@@ -24,7 +24,6 @@ def set_led(wpi_index, value):
     gpio.digital_write(gpio.gpio_index_of_wpi_pin(wpi_index), value)
 
 def turn_green_on():
-    print "fkjsfkgjd"
     set_led(pin_green_led_wpi, 1)
 
 set_led(pin_red_led_wpi, 0)
