@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from robot import Robot		#robot is an installed package
 import motordriver
-from I2C_bus import I2C_bus             #from libAX12/pythonBinding
 from AX12 import AX12
 import gpio
 
@@ -10,13 +9,7 @@ from threading import Thread
 
 from starting_block import manage_time_elapsed
 
-try:
-    I2C_bus.init(115200)
-except Exception as e:
-    print "[-] Unable to start I2C communication ("+str(e)+"), exiting"
-    exit()
 
-gpio.init()
 
 ############################# PARAMETERS #######################################
 

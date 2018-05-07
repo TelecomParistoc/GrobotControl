@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-from os import system
-system("gpio mode 30 out")
-system("gpio write 30 up")
+import init_and_LED
 
 import motion                           #from libmotors
 from starting_block import add_jack_and_delay, time_elapsed, manage_time_elapsed
@@ -30,7 +28,8 @@ def init_color(robot):
 # delay = 10 = maximum time the robot waits before aborting
 manage_jack = add_jack_and_delay(robot, 666)
 
-gpio.assign_callback_on_gpio_down(jack_pin_bcm, lambda: manage_jack(False))
+gpio.assign_callback_on_gpio_down(jack_pin_bcm, lambda: (manage_jack(False),
+                                                init_and_LED.turn_green_on()))
 gpio.assign_callback_on_gpio_up(jack_pin_bcm, lambda: manage_jack(True))
 
 robot.wait_sequence() # We wait for jack beeing pushed/pulled
@@ -57,13 +56,9 @@ robot.add_sequence("main_sequence")
 # NOTE : this is not sufficient !!! a stop command must be send to the STM
 # some cleaning must also be done: stop AX12, ...
 
-robot.add_parallel(log, [], False)
 robot.add_parallel(time_elapsed, [100, grobot_time_elapsed], False)
 
-try :
-    robot.load_add_path("paths/chemin 8.json")
-except Exception as e:
-    print "ERROR : ", e
+robot.load_add_path("paths/chemin 8.json")
 robot.add_parallel(robot.turn, [45 if robot.color == "green" else 315])
 robot.wait()
 
