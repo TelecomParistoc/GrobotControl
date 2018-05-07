@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+from os import system
+system("gpio mode 30 out")
+system("gpio write 30 up")
 
 import motion                           #from libmotors
 from starting_block import add_jack_and_delay, time_elapsed, manage_time_elapsed
@@ -6,7 +9,6 @@ from starting_block import add_jack_and_delay, time_elapsed, manage_time_elapsed
 from structure_Grobot import *
 
 from time import sleep
-
 
 STARTING_POINT = None #set in init_color()
 STARTING_HEADING = None
@@ -58,7 +60,10 @@ robot.add_sequence("main_sequence")
 robot.add_parallel(log, [], False)
 robot.add_parallel(time_elapsed, [100, grobot_time_elapsed], False)
 
-robot.load_add_path("paths/chemin 8.json")
+try :
+    robot.load_add_path("paths/chemin 8.json")
+except Exception as e:
+    print "ERROR : ", e
 robot.add_parallel(robot.turn, [45 if robot.color == "green" else 315])
 robot.wait()
 

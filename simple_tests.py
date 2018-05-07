@@ -6,15 +6,17 @@ from structure_Grobot import *
 
 from time import sleep
 
-#robot.setPosition(0, 0)
-robot.set_heading(0)
-#robot.start_collision_detection(is_obstacle_forwards, is_obstacle_backwards)
-sleep(.1)
-robot.set_direction_to_wall(motion.DIR_FORWARD)
-sleep(.1)
+robot.setPosition(2000, 50)
+robot.set_heading(90)
+
+robot.start_collision_detection(is_obstacle_forwards, is_obstacle_backwards)
+
+robot.moveTo(2000, 850, -1)
+
+"""robot.set_direction_to_wall(motion.DIR_FORWARD)
 robot.set_orientation_after_wall(90)
-sleep(.1)
 robot.move_to_wall()
+"""
 
 sleep(.5)
 
@@ -26,4 +28,4 @@ while 1:
     print "x = ", motordriver.get_pos_X()
     print "y = ", motordriver.get_pos_Y()
     print "heading =", motordriver.get_heading()
-    sleep(.25)
+    sleep(.925)
