@@ -168,7 +168,7 @@ def grobot_time_elapsed():
     called when the time is over to stop Grobot from moving
     '''
     for name, _ in AX12_list:
-        robot.getattr(name).turn(0)
+        getattr(robot, name).turn(0)
     robot.emergency_stop()
     manage_time_elapsed(robot)
 
