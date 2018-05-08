@@ -59,21 +59,7 @@ robot.add_sequence("main_sequence")
 # NOTE : this is not sufficient !!! a stop command must be send to the STM
 # some cleaning must also be done: stop AX12, ...
 
-for i in range(20):
-    robot.add_parallel(sleep, [0.5], False)
-
-    robot.add_parallel(deploy_right_ball_collector, [], False)
-    robot.add_parallel(deploy_left_ball_collector, [], False)
-
-    robot.add_parallel(sleep, [0.5], False)
-
-    robot.add_parallel(close_right_ball_collector, [], False)
-    robot.add_parallel(close_left_ball_collector, [], False)
-
-robot.wait()
-
 #robot moves away from the wall, rotates and deployes one ear
-'''
 robot.load_add_path(PATHS_FOLDER + "eau_propre1.json")
 if(robot.color == "green") {
     robot.add_parallel(deploy_right_ball_collector, [], False)
@@ -81,7 +67,17 @@ if(robot.color == "green") {
     robot.add_parallel(deploy_left_ball_collector, [], False)
 }
 robot.wait()
-'''
+
+robot.load_add_path(PATHS_FOLDER + "eau_propre2.json")
+robot.wait()
+
+if(robot.color == "green") {
+    robot.add_parallel_thread(process_balls, ["right", True])
+} else {
+    robot.add_parallel_thread(process_balls, ["left", True])
+}
+robot.add_parallel_thread(shake, [10], False)
+robot.wait()
 
 '''
 robot.load_add_path(PATHS_FOLDER + "chemin 8.json")
@@ -120,10 +116,6 @@ robot.wait(max_delay=3, n_callbacks=1)
 #robot.wait(max_delay=2.0, n_callbacks=1)
 
 #robot.add_parallel(log, [], False)
-"""robot.add_parallel_thread(process_balls, ["right", True])
-robot.add_parallel_thread(shake, [10], False)
-robot.wait()
-"""
 """
 robot.add_parallel(log, [], False)
 robot.add_parallel(robot.move, [-100])
