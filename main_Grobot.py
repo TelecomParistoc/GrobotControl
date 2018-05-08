@@ -30,6 +30,7 @@ def init_color(robot):
 # delay = 10 = maximum time the robot waits before aborting
 manage_jack = add_jack_and_delay(robot, 666)
 
+init_and_LED.turn_orange_on()
 gpio.assign_callback_on_gpio_down(jack_pin_bcm, lambda: (manage_jack(False),
                                                 init_and_LED.turn_green_on()))
 gpio.assign_callback_on_gpio_up(jack_pin_bcm, lambda: manage_jack(True))
@@ -50,7 +51,7 @@ init_color(robot)
 robot.setPosition(*STARTING_POINT)
 robot.set_heading(STARTING_HEADING)
 robot.init_bee_arm() #make sure there is enough space at that time!!
-#robot.start_collision_detection(is_obstacle_forwards, is_obstacle_backwards)
+robot.start_collision_detection(is_obstacle_forwards, is_obstacle_backwards)
 
 robot.add_sequence("main_sequence")
 
@@ -60,6 +61,25 @@ robot.add_sequence("main_sequence")
 
 robot.add_parallel(time_elapsed, [100, grobot_time_elapsed], False)
 
+robot.add_parallel(deploy_right_ball_collector, [], False)
+robot.add_parallel(deploy_left_ball_collector, [], False)
+
+robot.add_parallel(sleep, [2])
+
+robot.add_parallel()
+
+#robot moves away from the wall, rotates and deployes one ear
+'''
+robot.load_add_path(PATHS_FOLDER + "eau_propre1.json")
+if(robot.color == "green") {
+    robot.add_parallel(deploy_right_ball_collector, [], False)
+} else {
+    robot.add_parallel(deploy_left_ball_collector, [], False)
+}
+robot.wait()
+'''
+
+'''
 robot.load_add_path(PATHS_FOLDER + "chemin 8.json")
 robot.add_parallel(robot.turn, [45 if robot.color == "green" else 315])
 robot.wait()
@@ -85,7 +105,7 @@ robot.add_parallel(robot.set_orientation_after_wall, [90], False)
 robot.add_parallel(robot.move_to_wall, [], False)
 #degueu: il faudrait mettre un callback a move_to_wall
 robot.wait(max_delay=3, n_callbacks=1)
-
+'''
 
 #robot.add_parallel(deploy_left_ball_collector, [], False)
 #robot.wait()
