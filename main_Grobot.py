@@ -18,17 +18,17 @@ def init_color(robot):
     robot.color = get_team_color()
     if(robot.color == "orange"):
         print "robot is orange: ", STARTING_POINT
-        STARTING_POINT = [157, 601]
-        STARTING_HEADING = 90
+        STARTING_POINT = [35, 348]
+        STARTING_HEADING = 180
     else:
-        STARTING_POINT = [2840, 601]
-        STARTING_HEADING = 90
+        STARTING_POINT = [2965, 348]
+        STARTING_HEADING = 0
 
 
 ########################  JACK MANAGEMENT ####################
 
 # delay = 10 = maximum time the robot waits before aborting
-manage_jack = add_jack_and_delay(robot, 666)
+manage_jack = add_jack_and_delay(robot, 6666)
 
 init_and_LED.turn_orange_on()
 gpio.assign_callback_on_gpio_down(jack_pin_bcm, lambda: (manage_jack(False),
@@ -43,8 +43,8 @@ robot.wait_sequence() # We wait for jack beeing pushed/pulled
 
 
 
-def log():
-    print "look at me mom", robot.color
+def log(message):
+    print message
 
 
 init_color(robot)
@@ -55,12 +55,10 @@ robot.start_collision_detection(is_obstacle_forwards, is_obstacle_backwards)
 
 robot.add_sequence("main_sequence")
 
-# IMPORTANT : programs a global stop on the raspi, ie no more actions will be done
-# NOTE : this is not sufficient !!! a stop command must be send to the STM
-# some cleaning must also be done: stop AX12, ...
+robot.add_parallel(time_elapsed, [99, grobot_time_elapsed], False)
 
-#robot moves away from the wall, rotates and deployes one ear
 
+"""
 if(robot.color == "green"):
     robot.add_parallel(deploy_right_ball_collector, [], False)
 else:
@@ -79,34 +77,62 @@ else:
 robot.load_add_path(PATHS_FOLDER + "aller_tirer.json")
 robot.wait()
 
+robot.add_parallel_thread(shake, [5], False)
 robot.add_parallel(launch_ball, [8], False)
 robot.wait()
 
-robot.load_add_path(PATHS_FOLDER + "defoncer_bouton.json")
+"""
+
+
+##              allumer le panneau domotique
+robot.load_add_path(PATHS_FOLDER + "chemin 11.json")
 robot.add_parallel(robot.turn, [90])
-robot.load_add_path(PATHS_FOLDER + "rapprocher_bouton.json")
-robot.wait(max_delay=3)
+robot.wait()
+
+#robot.load_add_path(PATHS_FOLDER + "chemin 12.json")
+#robot.wait(max_delay=3)
+#is replaced by:
+robot.move(-40)
+robot.wait(max_delay=4)
 
 robot.add_parallel(robot.set_direction_to_wall, [motion.DIR_BACKWARD], False)
 robot.add_parallel(robot.set_orientation_after_wall, [90], False)
 robot.add_parallel(robot.move_to_wall, [], False)
 #degueu: il faudrait mettre un callback a move_to_wall
-robot.wait(max_delay=3, n_callbacks=1)
+robot.wait(max_delay=4, n_callbacks=2)
 
 robot.add_parallel(lambda: robot.setPosition(robot.get_pos_X(), 244), [], False)
+robot.add_parallel(log, ["\n===== fin du panneau domotique ====\n"], False)
 
-robot.load_add_path(PATHS_FOLDER + "chemin_bouton_abeille.json")
+##              aller a l'abeille
+robot.load_add_path(PATHS_FOLDER + "chemin 14.json")
+
+#on se recale en chemin
+robot.add_parallel(robot.set_direction_to_wall, [motion.DIR_FORWARD], False)
+robot.add_parallel(robot.set_orientation_after_wall,
+                    [0 if robot.color == "green" else 180], False)
+robot.add_parallel(robot.move_to_wall, [], False)
+robot.wait(max_delay=3, n_callbacks=2)
+robot.add_parallel(lambda: robot.setPosition(2949 if robot.color == "green" else 51,
+                            robot.get_pos_Y()), [], False)
+robot.add_parallel(log, ["\n===== Fin recalage avant abeille ====\n"], False)
+
+robot.add_parallel(robot.move, [-110])
+robot.wait()
+
+#robot.load_add_path(PATHS_FOLDER + "chemin 17.json")
+robot.add_parallel(robot.turn, [90])
+robot.wait()
+robot.load_add_path(PATHS_FOLDER + "chemin 16.json")
 
 robot.add_parallel(robot.set_direction_to_wall, [motion.DIR_FORWARD], False)
 robot.add_parallel(robot.set_orientation_after_wall, [90], False)
 robot.add_parallel(robot.move_to_wall, [], False)
-#degueu: il faudrait mettre un callbacl a move_to_wall
+#degueu: il faudrait mettre un callback a move_to_wall
 robot.wait(max_delay=3, n_callbacks=1)
 
 robot.add_parallel(robot.push_bee, [], False)
 robot.wait()
-
-
 
 
 

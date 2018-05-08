@@ -96,9 +96,9 @@ def close_right_ball_collector():
     robot.AX12_right_ball_collector.move(-41)
 
 def move_sorter_to_input_position(side):
-    if side == "left":
+    if side == "right":
         robot.AX12_sorter.move(73)
-    elif side == "right":
+    elif side == "left":
         robot.AX12_sorter.move(-73) #TODO find a good value!!
     else:
         print "[ERROR]"
@@ -121,7 +121,7 @@ def process_balls(side, all_clean, callback):
 
     #un while on a une balle serait mieux
     robot.AX12_sorter.set_speed(10)
-    for i in range(7):
+    for i in range(3):
         move_sorter_to_input_position(side)
 
         #wait for a ball
