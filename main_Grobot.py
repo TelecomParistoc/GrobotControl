@@ -59,14 +59,18 @@ robot.add_sequence("main_sequence")
 # NOTE : this is not sufficient !!! a stop command must be send to the STM
 # some cleaning must also be done: stop AX12, ...
 
-robot.add_parallel(time_elapsed, [100, grobot_time_elapsed], False)
+for i in range(20):
+    robot.add_parallel(sleep, [0.5], False)
 
-robot.add_parallel(deploy_right_ball_collector, [], False)
-robot.add_parallel(deploy_left_ball_collector, [], False)
+    robot.add_parallel(deploy_right_ball_collector, [], False)
+    robot.add_parallel(deploy_left_ball_collector, [], False)
 
-robot.add_parallel(sleep, [2])
+    robot.add_parallel(sleep, [0.5], False)
 
-robot.add_parallel()
+    robot.add_parallel(close_right_ball_collector, [], False)
+    robot.add_parallel(close_left_ball_collector, [], False)
+
+robot.wait()
 
 #robot moves away from the wall, rotates and deployes one ear
 '''
