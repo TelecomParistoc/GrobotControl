@@ -18,11 +18,11 @@ def init_color(robot):
     robot.color = get_team_color()
     if(robot.color == "orange"):
         print "robot is orange: ", STARTING_POINT
-        STARTING_POINT = [50, 155]
-        STARTING_HEADING = 0
+        STARTING_POINT = [157, 601]
+        STARTING_HEADING = 90
     else:
-        STARTING_POINT = [2944, 350]
-        STARTING_HEADING = 0
+        STARTING_POINT = [2840, 601]
+        STARTING_HEADING = 90
 
 
 ########################  JACK MANAGEMENT ####################
@@ -60,24 +60,55 @@ robot.add_sequence("main_sequence")
 # some cleaning must also be done: stop AX12, ...
 
 #robot moves away from the wall, rotates and deployes one ear
-robot.load_add_path(PATHS_FOLDER + "eau_propre1.json")
-if(robot.color == "green") {
+
+if(robot.color == "green"):
     robot.add_parallel(deploy_right_ball_collector, [], False)
-} else {
+else:
     robot.add_parallel(deploy_left_ball_collector, [], False)
-}
+
 robot.wait()
 
-robot.load_add_path(PATHS_FOLDER + "eau_propre2.json")
+robot.load_add_path(PATHS_FOLDER + "eau_propre.json")
 robot.wait()
 
-if(robot.color == "green") {
+if(robot.color == "green"):
     robot.add_parallel_thread(process_balls, ["right", True])
-} else {
+else:
     robot.add_parallel_thread(process_balls, ["left", True])
-}
-robot.add_parallel_thread(shake, [10], False)
+
+robot.load_add_path(PATHS_FOLDER + "aller_tirer.json")
 robot.wait()
+
+robot.add_parallel(launch_ball, [8], False)
+robot.wait()
+
+robot.load_add_path(PATHS_FOLDER + "defoncer_bouton.json")
+robot.add_parallel(robot.turn, [90])
+robot.load_add_path(PATHS_FOLDER + "rapprocher_bouton.json")
+robot.wait(max_delay=3)
+
+robot.add_parallel(robot.set_direction_to_wall, [motion.DIR_BACKWARD], False)
+robot.add_parallel(robot.set_orientation_after_wall, [90], False)
+robot.add_parallel(robot.move_to_wall, [], False)
+#degueu: il faudrait mettre un callback a move_to_wall
+robot.wait(max_delay=3, n_callbacks=1)
+
+robot.add_parallel(lambda: robot.setPosition(robot.get_pos_X(), 244), [], False)
+
+robot.load_add_path(PATHS_FOLDER + "chemin_bouton_abeille.json")
+
+robot.add_parallel(robot.set_direction_to_wall, [motion.DIR_FORWARD], False)
+robot.add_parallel(robot.set_orientation_after_wall, [90], False)
+robot.add_parallel(robot.move_to_wall, [], False)
+#degueu: il faudrait mettre un callbacl a move_to_wall
+robot.wait(max_delay=3, n_callbacks=1)
+
+robot.add_parallel(robot.push_bee, [], False)
+robot.wait()
+
+
+
+
 
 '''
 robot.load_add_path(PATHS_FOLDER + "chemin 8.json")
@@ -100,11 +131,6 @@ robot.wait(max_delay=1, n_callbacks=1)
 robot.load_add_path(PATHS_FOLDER + "chemin 10.json")
 robot.add_parallel(robot.turn, [90])
 robot.wait()
-robot.add_parallel(robot.set_direction_to_wall, [motion.DIR_BACKWARD], False)
-robot.add_parallel(robot.set_orientation_after_wall, [90], False)
-robot.add_parallel(robot.move_to_wall, [], False)
-#degueu: il faudrait mettre un callback a move_to_wall
-robot.wait(max_delay=3, n_callbacks=1)
 '''
 
 #robot.add_parallel(deploy_left_ball_collector, [], False)

@@ -58,8 +58,8 @@ def get_team_color():
 ##################     CONSTRUCTION OF THE ROBOT    ############################
 
 #contains the (name, id) of the used AX12
-AX12_list = [("AX12_left_ball_collector", 143),
-            ("AX12_right_ball_collector", 133),
+AX12_list = [("AX12_left_ball_collector", 133),
+            ("AX12_right_ball_collector", 143),
             ("AX12_catapult", 162),
             ("AX12_sorter", 144),
             ("AX12_ball_release", 142),
@@ -84,16 +84,16 @@ def is_obstacle_backwards():
     return False
 
 def deploy_left_ball_collector():
-    robot.AX12_left_ball_collector.move(30)
+    robot.AX12_left_ball_collector.move(50)
 
 def deploy_right_ball_collector():
-    robot.AX12_right_ball_collector.move(50)
+    robot.AX12_right_ball_collector.move(30)
 
 def close_left_ball_collector():
-    robot.AX12_left_ball_collector.move(-41)
+    robot.AX12_left_ball_collector.move(130)
 
-def close_right_ball_collector(): #TODO
-    robot.AX12_right_ball_collector.move(130)
+def close_right_ball_collector():
+    robot.AX12_right_ball_collector.move(-41)
 
 def move_sorter_to_input_position(side):
     if side == "left":
@@ -108,7 +108,9 @@ def move_sorter_to_clean_position():
 
 def move_sorter_to_drop(side):
     if side == "left":
-        robot.AX12_sorter.move(126)
+        robot.AX12_sorter.move(-70)
+    else:
+        robot.AX12_sorter.move(80)
 
 def process_balls(side, all_clean, callback):
     """

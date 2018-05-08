@@ -26,6 +26,9 @@ def set_led(wpi_index, value):
 def turn_green_on():
     set_led(pin_green_led_wpi, 1)
 
+def turn_orange_on():
+    set_led(pin_orange_led_wpi, 1)
+
 set_led(pin_red_led_wpi, 0)
 set_led(pin_green_led_wpi, 0)
 
