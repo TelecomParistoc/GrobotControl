@@ -28,7 +28,7 @@ def init_color(robot):
 ########################  JACK MANAGEMENT ####################
 
 # delay = 10 = maximum time the robot waits before aborting
-manage_jack = add_jack_and_delay(robot, 6666)
+"""manage_jack = add_jack_and_delay(robot, 6666)
 
 init_and_LED.turn_orange_on()
 gpio.assign_callback_on_gpio_down(jack_pin_bcm, lambda: (manage_jack(False),
@@ -36,7 +36,7 @@ gpio.assign_callback_on_gpio_down(jack_pin_bcm, lambda: (manage_jack(False),
 gpio.assign_callback_on_gpio_up(jack_pin_bcm, lambda: manage_jack(True))
 
 robot.wait_sequence() # We wait for jack beeing pushed/pulled
-
+"""
 
 ############################ TOP LEVEL ACTION DEFINITION #######################
 # remainder: definition != execution
@@ -123,17 +123,25 @@ robot.wait()
 #robot.load_add_path(PATHS_FOLDER + "chemin 17.json")
 robot.add_parallel(robot.turn, [90])
 robot.wait()
-robot.load_add_path(PATHS_FOLDER + "chemin 16.json")
+robot.load_add_path(PATHS_FOLDER + "chemin 16.json", max_delay=8)
 
 robot.add_parallel(robot.set_direction_to_wall, [motion.DIR_FORWARD], False)
 robot.add_parallel(robot.set_orientation_after_wall, [90], False)
 robot.add_parallel(robot.move_to_wall, [], False)
 #degueu: il faudrait mettre un callback a move_to_wall
-robot.wait(max_delay=3, n_callbacks=1)
+robot.wait(max_delay=2, n_callbacks=1)
 
 robot.add_parallel(robot.push_bee, [], False)
-robot.wait()
+robot.wait(max_delay=1, n_callbacks=1)
+robot.add_parallel(log, ["\n===== Abeille pousee ====\n"], False)
 
+
+robot.add_parallel(deploy_left_ball_collector, [], False)
+robot.add_parallel(deploy_right_ball_collector, [], False)
+robot.load_add_path(PATHS_FOLDER + "chemin 20.json")
+
+robot.wait(max_delay=2, n_callbacks=1)
+robot.load_add_path(PATHS_FOLDER + "chemin 21.json")
 
 
 '''
