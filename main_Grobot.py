@@ -28,7 +28,7 @@ def init_color(robot):
 ########################  JACK MANAGEMENT ####################
 
 # delay = 10 = maximum time the robot waits before aborting
-"""manage_jack = add_jack_and_delay(robot, 6666)
+manage_jack = add_jack_and_delay(robot, 6666)
 
 init_and_LED.turn_orange_on()
 gpio.assign_callback_on_gpio_down(jack_pin_bcm, lambda: (manage_jack(False),
@@ -36,7 +36,7 @@ gpio.assign_callback_on_gpio_down(jack_pin_bcm, lambda: (manage_jack(False),
 gpio.assign_callback_on_gpio_up(jack_pin_bcm, lambda: manage_jack(True))
 
 robot.wait_sequence() # We wait for jack beeing pushed/pulled
-"""
+
 
 ############################ TOP LEVEL ACTION DEFINITION #######################
 # remainder: definition != execution
