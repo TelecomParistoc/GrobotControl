@@ -222,7 +222,6 @@ def grobot_time_elapsed():
         getattr(robot, name).turn(0)
 	getattr(robot, name).set_torque(0)
     robot.emergency_stop()
-    manage_time_elapsed(robot)
 
 def init_bee_arm(robot):
     #make sure the robot has enough space to move its arm
