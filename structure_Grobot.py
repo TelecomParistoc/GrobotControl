@@ -72,7 +72,7 @@ AX12_list = [("AX12_left_ball_collector", 133),
             #("AX12_ball_release", 142),
             ("AX12_bee_arm", 161),
             ("AX12_pos_read_left", 144),
-            #("AX12_pos_read_right", 666) ##TODO NOT SET
+            ("AX12_pos_read_right", 129)
             ]
 
 robot = Robot()
@@ -246,14 +246,13 @@ robot.add_method(push_bee)
 
 
 def get_distance_to_left_edge(robot):
-    return private_get_distance_with_arm(robot.AX12_pos_read_left, -36, 1)
+    return private_get_distance_with_arm(robot.AX12_pos_read_left, -36, -43.2, 1)
 
 def get_distance_to_right_edge(robot):
-    return private_get_distance_with_arm(robot.AX12_pos_read_left, 666, -1)
+    return private_get_distance_with_arm(robot.AX12_pos_read_right, 128, 137.5, -1)
 
-def private_get_distance_with_arm(ax12, start_pos, sign):
-    straight_line = -43.2
-    padding = 4
+def private_get_distance_with_arm(ax12, start_pos, straight_line, sign):
+    padding = 4 # take into account wood padding
     ax12.set_torque(LOW_TORQUE)
     ax12.move(straight_line + sign * 90)
     last_pos = -666
