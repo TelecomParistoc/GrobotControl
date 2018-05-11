@@ -61,7 +61,7 @@ def get_team_color():
 AX12_list = [("AX12_left_ball_collector", 133),
             ("AX12_right_ball_collector", 143),
             ("AX12_catapult", 162),
-            ("AX12_sorter", 144),
+            #("AX12_sorter", 144),
             ("AX12_ball_release", 142),
             ("AX12_bee_arm", 161)]
 
@@ -135,7 +135,7 @@ def process_balls(side, all_clean, callback):
             #to check color, read gpio pins 18 and 22 (physical numbers)
             pass
 
-        sleep(1.)
+        sleep(3.)
 
     callback()
 
