@@ -63,7 +63,9 @@ AX12_list = [("AX12_left_ball_collector", 144),
             ("AX12_catapult", 162),
             #("AX12_sorter", 144),
             ("AX12_ball_release", 142),
-            ("AX12_bee_arm", 161)]
+            ("AX12_bee_arm", 161),
+            ("AX12_pos_read_left", 666),
+            ("AX12_pos_read_right", 666)]
 
 robot = Robot()
 for name, id in AX12_list:
@@ -94,6 +96,30 @@ def close_left_ball_collector():
 
 def close_right_ball_collector():
     robot.AX12_right_ball_collector.move(-41)
+
+def wiggle_right_ear(nb_wiggles):
+    for i in range(nb_wiggles):
+        close_right_ball_collector()
+        sleep(0.5)
+        deploy_right_ball_collector()
+        sleep(0.5)
+
+def wiggle_left_ear(nb_wiggles):
+    for i in range(nb_wiggles):
+        close_left_ball_collector()
+        sleep(0.5)
+        deploy_left_ball_collector()
+        sleep(0.5)
+
+def wiggle_ears(nb_wiggles):
+    for i in range(nb_wiggles):
+        close_left_ball_collector()
+        close_right_ball_collector()
+        sleep(0.5)
+        deploy_left_ball_collector()
+        deploy_right_ball_collector()
+        sleep(0.5)
+
 
 def move_sorter_to_input_position(side):
     if side == "right":
@@ -159,8 +185,14 @@ def launch_ball(number_of_balls=1):
 
     for i in range(number_of_balls):
 
+        wiggle_ears(1)
+
         wait_for_catapult_up()
         wait_for_catapult_down()
+        robot.AX12_catapult.turn(-20)
+        sleep(.6)
+        robot.AX12_catapult.turn(-CATAPULT_SPEED)
+
 
     robot.AX12_catapult.turn(0)
 
@@ -202,3 +234,17 @@ def push_bee(robot):
 
 robot.add_method(init_bee_arm)
 robot.add_method(push_bee)
+
+
+LOW_TORQUE = 100
+def get_distance_to_left_edge(robot):
+    start_pos = 666
+    robot.AX12_pos_read_left.set_torque(LOW_TORQUE)
+    robot.AX12_pos_read_left.moveTo(start_pos + 90)
+def get_distance_to_right_edge(robot):
+    start_pos = 666
+    robot.AX12_pos_read_right.set_torque(LOW_TORQUE)
+    robot.AX12_pos_read_right.moveTo(start_pos - 90)
+
+robot.add_method(get_distance_to_left_edge)
+robot.add_method(get_distance_to_right_edge)

@@ -51,7 +51,7 @@ def log(message):
 init_color(robot)
 robot.setPosition(*STARTING_POINT)
 robot.set_heading(STARTING_HEADING)
-robot.init_bee_arm() #make sure there is enough space at that time!!
+#robot.init_bee_arm() #make sure there is enough space at that time!!
 robot.start_collision_detection(is_obstacle_forwards, is_obstacle_backwards)
 
 robot.add_sequence("main_sequence")
@@ -125,14 +125,15 @@ robot.wait(max_delay=3, n_callbacks=2)
 robot.add_parallel(lambda: robot.setPosition(2949 if robot.color == "green" else 51,
                             robot.get_pos_Y()), [], False)
 robot.add_parallel(log, ["\n===== Fin recalage avant abeille ====\n"], False)
-
-robot.add_parallel(robot.move, [-110])
+robot.wait(max_delay=0.5, n_callbacks=1)
+robot.add_parallel(robot.move, [-120])
+robot.add_parallel(robot.init_bee_arm, [], False)
 robot.wait()
 
 #robot.load_add_path(PATHS_FOLDER + "chemin 17.json")
 robot.add_parallel(robot.turn, [90])
 robot.wait()
-robot.load_add_path(PATHS_FOLDER + "chemin 16.json", max_delay=8)
+robot.load_add_path(PATHS_FOLDER + "chemin 16.json", max_delay=4)
 
 robot.add_parallel(robot.set_direction_to_wall, [motion.DIR_FORWARD], False)
 robot.add_parallel(robot.set_orientation_after_wall, [90], False)
@@ -141,7 +142,7 @@ robot.add_parallel(robot.move_to_wall, [], False)
 robot.wait(max_delay=2, n_callbacks=1)
 
 robot.add_parallel(robot.push_bee, [], False)
-robot.wait(max_delay=1, n_callbacks=1)
+robot.wait(max_delay=1.6, n_callbacks=1)
 robot.add_parallel(log, ["\n===== Abeille pousee ====\n"], False)
 
 if(robot.color == "green"):
@@ -149,15 +150,19 @@ if(robot.color == "green"):
 else:
     robot.add_parallel(deploy_left_ball_collector, [], False)
 
-robot.load_add_path(PATHS_FOLDER + "chemin 20.json")
+robot.load_add_path(PATHS_FOLDER + "chemin 20.json", max_delay=6)
 
-robot.add_parallel(sleep, [1], False)
-
-robot.wait(max_delay=2, n_callbacks=1)
+robot.wait(max_delay=3, n_callbacks=1)
 robot.load_add_path(PATHS_FOLDER + "chemin 22.json")
 
 robot.add_parallel(launch_ball, [8], False)
-
+'''
+if(robot.color=="green"):
+    robot.add_parallel(wiggle_right_ear, [10], False)
+else:
+    robot.add_parallel(wiggle_left_ear, [10], False)
+'''
+robot.wait()
 
 '''
 robot.load_add_path(PATHS_FOLDER + "chemin 8.json")
