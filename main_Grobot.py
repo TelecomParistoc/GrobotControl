@@ -56,6 +56,7 @@ robot.start_collision_detection(is_obstacle_forwards, is_obstacle_backwards)
 
 robot.add_sequence("main_sequence")
 
+robot.to_call_at_stop = grobot_time_elapsed
 robot.add_parallel(time_elapsed, [99, grobot_time_elapsed], False)
 
 """
@@ -150,19 +151,31 @@ if(robot.color == "green"):
 else:
     robot.add_parallel(deploy_left_ball_collector, [], False)
 
+#aller en position avant mesure de distance
+robot.load_add_path(PATHS_FOLDER + "chemin 23.json")
+robot.add_parallel(robot.turn, [90])
+robot.wait(max_delay=5)
+
+robot.add_parallel(log, ["\n===== Lecture des x des familles ====\n"], False)
+
+#recalage
+if robot.color == "green":
+    robot.add_parallel(lambda: robot.setPosition(int(2860 - robot.get_distance_to_right_edge(robot.get_heading())), robot.get_pos_Y()), [], False)
+else:
+
+    robot.add_parallel(lambda: robot.setPosition(int(140 + robot.get_distance_to_left_edge(robot.get_heading())), robot.get_pos_Y()), [], False)
+
+robot.wait(max_delay=1, n_callbacks=1)
+
 robot.load_add_path(PATHS_FOLDER + "chemin 20.json", max_delay=6)
-
+robot.add_parallel(log, ["\n===== Arrivee devant le reservoir d'eau ====\n"], False)
 robot.wait(max_delay=3, n_callbacks=1)
-robot.load_add_path(PATHS_FOLDER + "chemin 22.json")
 
+#on se rapproche du but pour balancer les balles
+robot.load_add_path(PATHS_FOLDER + "chemin 22.json")
+robot.add_parallel(log, ["\n===== On est arrives !  on commence de tirer ====\n"], False)
 robot.add_parallel_thread(launch_ball, [8])
 robot.wait(max_delay=10)
-'''
-if(robot.color=="green"):
-    robot.add_parallel(wiggle_right_ear, [10], False)
-else:
-    robot.add_parallel(wiggle_left_ear, [10], False)
-'''
 robot.wait()
 
 '''

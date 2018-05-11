@@ -217,8 +217,10 @@ def grobot_time_elapsed():
     '''
     called when the time is over to stop Grobot from moving
     '''
+    print "switching AX12 off..."
     for name, _ in AX12_list:
         getattr(robot, name).turn(0)
+	getattr(robot, name).set_torque(0)
     robot.emergency_stop()
     manage_time_elapsed(robot)
 
@@ -245,14 +247,15 @@ robot.add_method(init_bee_arm)
 robot.add_method(push_bee)
 
 
-def get_distance_to_left_edge(robot):
-    return private_get_distance_with_arm(robot.AX12_pos_read_left, -36, -43.2, 1)
+def get_distance_to_left_edge(robot, angle):
+    return private_get_distance_with_arm(robot.AX12_pos_read_left, -36, -43.2, angle, 1)
 
-def get_distance_to_right_edge(robot):
-    return private_get_distance_with_arm(robot.AX12_pos_read_right, 128, 137.5, -1)
+def get_distance_to_right_edge(robot, angle):
+    return private_get_distance_with_arm(robot.AX12_pos_read_right, 128, 137.5, angle, -1)
 
-def private_get_distance_with_arm(ax12, start_pos, straight_line, sign):
+def private_get_distance_with_arm(ax12, start_pos, straight_line, angle, sign):
     padding = 4 # take into account wood padding
+    angle_offset = sign * (angle - 90)
     ax12.set_torque(LOW_TORQUE)
     ax12.move(straight_line + sign * 90)
     last_pos = -666
@@ -261,7 +264,11 @@ def private_get_distance_with_arm(ax12, start_pos, straight_line, sign):
         sleep(.2)
     last_pos = ax12.get_position()
     ax12.move(start_pos + sign * 1) # add offet to starting position to make sure it doesn't force
-    return POSITION_ARM_LENGTH * math.sin((abs(straight_line - last_pos) - padding)*math.pi/180)
+    ret = POSITION_ARM_LENGTH * math.sin((abs(straight_line - last_pos) - padding - angle_offset)*math.pi/180)
+    print "arm distance with angle_offset = ", angle_offset, " : ", ret
+    if (angle_offset != 0):
+        print "arm distance  with angle_offset = 0 : ", POSITION_ARM_LENGTH*math.sin((abs(straight_line-last_pos)-padding)*math.pi/180)
+    return ret
 
 robot.add_method(get_distance_to_left_edge)
 robot.add_method(get_distance_to_right_edge)
