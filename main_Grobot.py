@@ -121,7 +121,7 @@ robot.add_parallel(robot.set_direction_to_wall, [motion.DIR_FORWARD], False)
 robot.add_parallel(robot.set_orientation_after_wall,
                     [0 if robot.color == "green" else 180], False)
 robot.add_parallel(robot.move_to_wall, [], False)
-robot.wait(max_delay=2, n_callbacks=2)
+robot.wait(max_delay=3, n_callbacks=2)
 robot.add_parallel(lambda: robot.setPosition(2949 if robot.color == "green" else 51,
                             robot.get_pos_Y()), [], False)
 robot.add_parallel(log, ["\n===== Fin recalage avant abeille ====\n"], False)
@@ -144,14 +144,20 @@ robot.add_parallel(robot.push_bee, [], False)
 robot.wait(max_delay=1, n_callbacks=1)
 robot.add_parallel(log, ["\n===== Abeille pousee ====\n"], False)
 
+if(robot.color == "green"):
+    robot.add_parallel(deploy_right_ball_collector, [], False)
+else:
+    robot.add_parallel(deploy_left_ball_collector, [], False)
 
-robot.add_parallel(deploy_left_ball_collector, [], False)
-robot.add_parallel(deploy_right_ball_collector, [], False)
 robot.load_add_path(PATHS_FOLDER + "chemin 20.json")
 
+robot.add_parallel(sleep, [1], False)
+
 robot.wait(max_delay=2, n_callbacks=1)
-robot.load_add_path(PATHS_FOLDER + "chemin 21.json")
-'''
+robot.load_add_path(PATHS_FOLDER + "chemin 22.json")
+
+robot.add_parallel(launch_ball, [8], False)
+
 
 '''
 robot.load_add_path(PATHS_FOLDER + "chemin 8.json")
@@ -174,7 +180,7 @@ robot.wait(max_delay=1, n_callbacks=1)
 robot.load_add_path(PATHS_FOLDER + "chemin 10.json")
 robot.add_parallel(robot.turn, [90])
 robot.wait()
-
+'''
 
 #robot.add_parallel(deploy_left_ball_collector, [], False)
 #robot.wait()
