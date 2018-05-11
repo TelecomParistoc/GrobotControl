@@ -155,7 +155,8 @@ robot.load_add_path(PATHS_FOLDER + "chemin 20.json", max_delay=6)
 robot.wait(max_delay=3, n_callbacks=1)
 robot.load_add_path(PATHS_FOLDER + "chemin 22.json")
 
-robot.add_parallel(launch_ball, [8], False)
+robot.add_parallel_thread(launch_ball, [8])
+robot.wait(max_delay=10)
 '''
 if(robot.color=="green"):
     robot.add_parallel(wiggle_right_ear, [10], False)

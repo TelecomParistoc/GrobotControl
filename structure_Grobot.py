@@ -6,6 +6,7 @@ import gpio
 
 from time import sleep
 from threading import Thread
+import math
 
 from starting_block import manage_time_elapsed
 
@@ -13,36 +14,42 @@ from starting_block import manage_time_elapsed
 
 ############################# PARAMETERS #######################################
 
-CATAPULT_MEASUREMENT_PERIOD = 0.01 #seconds
-CATAPULT_SPEED = 60 #must be in range [0, 100]
+ROBOT_WIDTH                 = 305       # mm
+
+LOW_TORQUE                  = 100       # in range [0, 1023]
+POSITION_ARM_LENGTH         = 150       # mm
+TIME_TO_READ_POS_ARM        = .5        # second
+
+CATAPULT_MEASUREMENT_PERIOD = 0.01      # seconds
+CATAPULT_SPEED              = 60        # must be in range [0, 100]
 
 # IMPORTANT: functions in gpio bcm numbers (except gpio_index_of_wpi_pin!)
 
 #converts the wPi pin number to the BCM pin number
 #see the output of "gpio readall" on a raspi
-catapult_button_pin_bcm = gpio.gpio_index_of_wpi_pin(25)
-shaker_pin_bcm          = gpio.gpio_index_of_wpi_pin(1)
+catapult_button_pin_bcm = gpio.gpio_index_of_wpi_pin    (25)
+shaker_pin_bcm          = gpio.gpio_index_of_wpi_pin    (1)
 
-color_button_pin_bcm    = gpio.gpio_index_of_wpi_pin(22)
+color_button_pin_bcm    = gpio.gpio_index_of_wpi_pin    (22)
 
-front_sensors_pin_list_bcm = list(map(gpio.gpio_index_of_wpi_pin, [3, 4]))
-rear_sensors_pin_list_bcm = list(map(gpio.gpio_index_of_wpi_pin, [2, 0]))
+front_sensors_pin_list_bcm = list(map(gpio.gpio_index_of_wpi_pin,   [3, 4]))
+rear_sensors_pin_list_bcm = list(map(gpio.gpio_index_of_wpi_pin,    [2, 0]))
 
-jack_pin_bcm = gpio.gpio_index_of_wpi_pin(10)
+jack_pin_bcm = gpio.gpio_index_of_wpi_pin               (10)
 gpio.set_pin_mode(jack_pin_bcm, gpio.INPUT)
 #gpio.OUTPUT -> easier to test with hand (gpio write 5 0 ou 1)
 # ie we don't test with the real jack, we just simulate it
 #with the real jack, it must be gpio.INPUT )
 
 #####################    PIN INITIALISATION       ###############################
-gpio.set_pull_up_down(catapult_button_pin_bcm, gpio.PULL_UP)
-gpio.set_pin_mode(catapult_button_pin_bcm, gpio.INPUT)
+gpio.set_pull_up_down(  catapult_button_pin_bcm,  gpio.PULL_UP)
+gpio.set_pin_mode(      catapult_button_pin_bcm,  gpio.INPUT)
 
-gpio.set_pull_up_down(shaker_pin_bcm, gpio.PULL_UP)
-gpio.set_pin_mode(shaker_pin_bcm, gpio.OUTPUT)
+gpio.set_pull_up_down(  shaker_pin_bcm,           gpio.PULL_UP)
+gpio.set_pin_mode(      shaker_pin_bcm,           gpio.OUTPUT)
 
-gpio.set_pull_up_down(color_button_pin_bcm, gpio.PULL_UP)
-gpio.set_pin_mode(color_button_pin_bcm, gpio.INPUT)
+gpio.set_pull_up_down(  color_button_pin_bcm,     gpio.PULL_UP)
+gpio.set_pin_mode(      color_button_pin_bcm,     gpio.INPUT)
 
 for pin in front_sensors_pin_list_bcm + rear_sensors_pin_list_bcm:
     gpio.set_pull_up_down(pin, gpio.PULL_DOWN)
@@ -175,7 +182,7 @@ def wait_for_catapult_up():
         sleep(CATAPULT_MEASUREMENT_PERIOD)
 
 
-def launch_ball(number_of_balls=1):
+def launch_ball(number_of_balls, callback):
 
     #Start the rotation of the AX12
     robot.AX12_catapult.turn(-CATAPULT_SPEED)
@@ -195,6 +202,7 @@ def launch_ball(number_of_balls=1):
 
 
     robot.AX12_catapult.turn(0)
+    callback()
 
 def shake(duration=2.):
     #duration is in seconds
@@ -236,15 +244,21 @@ robot.add_method(init_bee_arm)
 robot.add_method(push_bee)
 
 
-LOW_TORQUE = 100
 def get_distance_to_left_edge(robot):
     start_pos = 666
     robot.AX12_pos_read_left.set_torque(LOW_TORQUE)
     robot.AX12_pos_read_left.moveTo(start_pos + 90)
+    sleep(TIME_TO_READ_POS_ARM)
+    return POSITION_ARM_LENGTH * math.sin(
+                    abs(start_pos - robot.AX12_pos_read_left.get_position()))
+
 def get_distance_to_right_edge(robot):
     start_pos = 666
     robot.AX12_pos_read_right.set_torque(LOW_TORQUE)
     robot.AX12_pos_read_right.moveTo(start_pos - 90)
+    return POSITION_ARM_LENGTH * math.sin(
+                    abs(start_pos - robot.AX12_pos_read_right.get_position()))
+
 
 robot.add_method(get_distance_to_left_edge)
 robot.add_method(get_distance_to_right_edge)
