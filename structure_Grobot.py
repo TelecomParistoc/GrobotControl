@@ -16,7 +16,7 @@ from starting_block import manage_time_elapsed
 
 ROBOT_WIDTH                 = 305       # mm
 
-LOW_TORQUE                  = 100       # in range [0, 1023]
+LOW_TORQUE                  = 10       # in range [0, 100]
 POSITION_ARM_LENGTH         = 150       # mm
 TIME_TO_READ_POS_ARM        = .5        # second
 
@@ -71,8 +71,9 @@ AX12_list = [("AX12_left_ball_collector", 144),
             #("AX12_sorter", 144),
             ("AX12_ball_release", 142),
             ("AX12_bee_arm", 161),
-            ("AX12_pos_read_left", 666),
-            ("AX12_pos_read_right", 666)]
+            ("AX12_pos_read_left", 144),
+            #("AX12_pos_read_right", 666) ##TODO NOT SET
+            ]
 
 robot = Robot()
 for name, id in AX12_list:
@@ -245,20 +246,19 @@ robot.add_method(push_bee)
 
 
 def get_distance_to_left_edge(robot):
-    start_pos = 666
-    robot.AX12_pos_read_left.set_torque(LOW_TORQUE)
-    robot.AX12_pos_read_left.moveTo(start_pos + 90)
-    sleep(TIME_TO_READ_POS_ARM)
-    return POSITION_ARM_LENGTH * math.sin(
-                    abs(start_pos - robot.AX12_pos_read_left.get_position()))
+    return private_get_distance_with_arm(robot.AX12_pos_read_left, -32.4, 1)
 
 def get_distance_to_right_edge(robot):
-    start_pos = 666
-    robot.AX12_pos_read_right.set_torque(LOW_TORQUE)
-    robot.AX12_pos_read_right.moveTo(start_pos - 90)
-    return POSITION_ARM_LENGTH * math.sin(
-                    abs(start_pos - robot.AX12_pos_read_right.get_position()))
+    return private_get_distance_with_arm(robot.AX12_pos_read_left, 666, -1)
 
+def private_get_distance_with_arm(ax12, start_pos, sign):
+    ax12.set_torque(LOW_TORQUE)
+    ax12.move(start_pos + sign * 90)
+    last_pos = -666
+    while abs(last_pos - ax12.get_position()) > 1:
+        last_pos = ax12.get_position()
+        sleep(.2)
+    return POSITION_ARM_LENGTH * math.sin(abs(start_pos - ax12.get_position()))
 
 robot.add_method(get_distance_to_left_edge)
 robot.add_method(get_distance_to_right_edge)
