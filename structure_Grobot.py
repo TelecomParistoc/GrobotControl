@@ -58,7 +58,7 @@ def get_team_color():
 ##################     CONSTRUCTION OF THE ROBOT    ############################
 
 #contains the (name, id) of the used AX12
-AX12_list = [("AX12_left_ball_collector", 133),
+AX12_list = [("AX12_left_ball_collector", 144),
             ("AX12_right_ball_collector", 143),
             ("AX12_catapult", 162),
             #("AX12_sorter", 144),
