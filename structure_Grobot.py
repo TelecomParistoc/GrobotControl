@@ -17,7 +17,7 @@ from starting_block import manage_time_elapsed
 ROBOT_WIDTH                 = 305       # mm
 
 LOW_TORQUE                  = 10       # in range [0, 100]
-POSITION_ARM_LENGTH         = 150       # mm
+POSITION_ARM_LENGTH         = 160       # mm
 TIME_TO_READ_POS_ARM        = .5        # second
 
 CATAPULT_MEASUREMENT_PERIOD = 0.01      # seconds
@@ -65,11 +65,11 @@ def get_team_color():
 ##################     CONSTRUCTION OF THE ROBOT    ############################
 
 #contains the (name, id) of the used AX12
-AX12_list = [("AX12_left_ball_collector", 144),
+AX12_list = [("AX12_left_ball_collector", 133),
             ("AX12_right_ball_collector", 143),
             ("AX12_catapult", 162),
             #("AX12_sorter", 144),
-            ("AX12_ball_release", 142),
+            #("AX12_ball_release", 142),
             ("AX12_bee_arm", 161),
             ("AX12_pos_read_left", 144),
             #("AX12_pos_read_right", 666) ##TODO NOT SET
@@ -246,19 +246,23 @@ robot.add_method(push_bee)
 
 
 def get_distance_to_left_edge(robot):
-    return private_get_distance_with_arm(robot.AX12_pos_read_left, -32.4, 1)
+    return private_get_distance_with_arm(robot.AX12_pos_read_left, -36, 1)
 
 def get_distance_to_right_edge(robot):
     return private_get_distance_with_arm(robot.AX12_pos_read_left, 666, -1)
 
 def private_get_distance_with_arm(ax12, start_pos, sign):
+    straight_line = -43.2
+    padding = 4
     ax12.set_torque(LOW_TORQUE)
-    ax12.move(start_pos + sign * 90)
+    ax12.move(straight_line + sign * 90)
     last_pos = -666
     while abs(last_pos - ax12.get_position()) > 1:
         last_pos = ax12.get_position()
         sleep(.2)
-    return POSITION_ARM_LENGTH * math.sin(abs(start_pos - ax12.get_position()))
+    last_pos = ax12.get_position()
+    ax12.move(start_pos + sign * 1) # add offet to starting position to make sure it doesn't force
+    return POSITION_ARM_LENGTH * math.sin((abs(straight_line - last_pos) - padding)*math.pi/180)
 
 robot.add_method(get_distance_to_left_edge)
 robot.add_method(get_distance_to_right_edge)
