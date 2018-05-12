@@ -52,7 +52,7 @@ init_color(robot)
 robot.setPosition(*STARTING_POINT)
 robot.set_heading(STARTING_HEADING)
 #robot.init_bee_arm() #make sure there is enough space at that time!!
-robot.start_collision_detection(is_obstacle_forwards, is_obstacle_backwards)
+#robot.start_collision_detection(is_obstacle_forwards, is_obstacle_backwards)
 
 robot.add_sequence("main_sequence")
 

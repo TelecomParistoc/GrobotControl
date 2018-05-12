@@ -100,10 +100,10 @@ def deploy_right_ball_collector():
     robot.AX12_right_ball_collector.move(30)
 
 def close_left_ball_collector():
-    robot.AX12_left_ball_collector.move(130)
+    robot.AX12_left_ball_collector.move(125)
 
 def close_right_ball_collector():
-    robot.AX12_right_ball_collector.move(-41)
+    robot.AX12_right_ball_collector.move(-30)
 
 def wiggle_right_ear(nb_wiggles, period=0.5):
     for i in range(nb_wiggles):
