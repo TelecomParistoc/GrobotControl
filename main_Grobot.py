@@ -57,7 +57,7 @@ robot.start_collision_detection(is_obstacle_forwards, is_obstacle_backwards)
 robot.add_sequence("main_sequence")
 
 robot.to_call_at_stop = grobot_time_elapsed
-robot.add_parallel(time_elapsed, [99, grobot_time_elapsed], False)
+robot.add_parallel(time_elapsed, [99, robot.stop], False)
 
 """
 robot.add_parallel(deploy_left_ball_collector, [], False)
@@ -168,14 +168,19 @@ else:
 robot.wait(max_delay=1, n_callbacks=1)
 
 robot.load_add_path(PATHS_FOLDER + "chemin 20.json", max_delay=6)
+if robot.color == "green":
+    robot.add_parallel_thread(wiggle_right_ear, [10, 0.2], False)
+else:
+    robot.add_parallel_thread(wiggle_left_ear, [10, 0.2], False)
 robot.add_parallel(log, ["\n===== Arrivee devant le reservoir d'eau ====\n"], False)
 robot.wait(max_delay=3, n_callbacks=1)
 
 #on se rapproche du but pour balancer les balles
 robot.load_add_path(PATHS_FOLDER + "chemin 22.json")
 robot.add_parallel(log, ["\n===== On est arrives !  on commence de tirer ====\n"], False)
-robot.add_parallel_thread(launch_ball, [8])
-robot.wait(max_delay=10)
+robot.add_parallel_thread(shake, [10], False)
+robot.add_parallel_thread(launch_ball, [9])
+robot.wait(max_delay=20)
 robot.wait()
 
 '''

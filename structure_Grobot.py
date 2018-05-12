@@ -105,19 +105,19 @@ def close_left_ball_collector():
 def close_right_ball_collector():
     robot.AX12_right_ball_collector.move(-41)
 
-def wiggle_right_ear(nb_wiggles):
+def wiggle_right_ear(nb_wiggles, period=0.5):
     for i in range(nb_wiggles):
         close_right_ball_collector()
-        sleep(0.5)
+        sleep(period)
         deploy_right_ball_collector()
-        sleep(0.5)
+        sleep(period)
 
-def wiggle_left_ear(nb_wiggles):
+def wiggle_left_ear(nb_wiggles, period=0.5):
     for i in range(nb_wiggles):
         close_left_ball_collector()
-        sleep(0.5)
+        sleep(period)
         deploy_left_ball_collector()
-        sleep(0.5)
+        sleep(period)
 
 def wiggle_ears(nb_wiggles):
     for i in range(nb_wiggles):
@@ -221,6 +221,7 @@ def grobot_time_elapsed():
     for name, _ in AX12_list:
         getattr(robot, name).turn(0)
 	getattr(robot, name).set_torque(0)
+    gpio.digital_write(shaker_pin_bcm, 0)
     robot.emergency_stop()
 
 def init_bee_arm(robot):
